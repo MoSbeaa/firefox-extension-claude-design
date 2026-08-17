@@ -116,6 +116,7 @@
         return Number(value) === 0 ? 'default' : String(value);
       case 'chatWidth':
       case 'codeFontSize':
+      case 'turnGap':
         return Number(value) === 0 ? 'default' : value + 'px';
       default:
         return String(value);

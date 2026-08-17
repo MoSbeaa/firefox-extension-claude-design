@@ -43,6 +43,7 @@
 
     // ---- layout -----------------------------------------------------
     chatWidth: 0, // px, 0 = untouched
+    turnGap: 0, // px gap between chat turns, 0 = untouched
     hideSidebar: false,
 
     // ---- escape hatch ----------------------------------------------
@@ -433,7 +434,26 @@
     // ---- layout ------------------------------------------------------
     var width = clamp(s.chatWidth, 0, 3000, 0);
     if (width) {
-      out.push('html.cst-on main [class*="max-w-"] { max-width: ' + width + 'px !important; }');
+      // The transcript column carries `epitaxy-transcript-width`; matching on
+      // the suffix keeps working if the design-system prefix is renamed. The
+      // Tailwind widths are a fallback for builds without that class.
+      out.push(
+        'html.cst-on [class*="transcript-width"] { max-width: ' + width + 'px !important; }',
+        'html.cst-on main :is([class*="max-w-3xl"], [class*="max-w-2xl"]) {',
+        '  max-width: ' + width + 'px !important;',
+        '}'
+      );
+    }
+
+    var turnGap = clamp(s.turnGap, 0, 200, 0);
+    if (turnGap) {
+      // Turn spacing comes from `pb-[var(--chat-turn-gap)]`, so redefining the
+      // variable is enough — set it on the root and on the consuming elements
+      // in case the site declares it further down the tree.
+      rootVars.push('--chat-turn-gap: ' + turnGap + 'px !important;');
+      out.push(
+        'html.cst-on [class*="chat-turn-gap"] { --chat-turn-gap: ' + turnGap + 'px !important; }'
+      );
     }
 
     if (s.hideSidebar) {

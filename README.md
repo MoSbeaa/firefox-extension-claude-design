@@ -29,7 +29,7 @@ Add-on From File*.
 | --- | --- |
 | **Background** | Solid colour, gradient (two stops + angle), or image (URL or a local file embedded as a data URI, with fit / blur / dim). Plus panel colour and panel opacity, which decide how much of the background shows through the chat surfaces. |
 | **Text** | Font family (system fonts + custom stack), force-font toggle, size scale, line height, letter spacing, weight, text colour, accent colour. |
-| **Layout** | Chat column width, hide the conversation sidebar, code font family and code font size. |
+| **Layout** | Chat column width, spacing between messages, hide the conversation sidebar, code font family and code font size. |
 | **Advanced** | Free-form custom CSS, a read-only view of the generated stylesheet, and settings export/import as JSON. |
 
 Five presets — Midnight, Paper, Terminal, Solarized, Focus — fill everything in
@@ -56,20 +56,29 @@ and typography exposed as tokens on the root element:
 ```
 
 Overriding those propagates through every component that uses them, and it keeps
-working when the site ships new markup. Broad `!important` rules follow as a
-safety net for anything that hardcodes a value, and a couple of features
-(chat width, hide sidebar) do have to match on structure:
+working when the site ships new markup.
+
+Two site-specific hooks are used directly, both taken from the live markup
+(`epitaxy-transcript-width pb-[var(--chat-turn-gap)] empty:pb-0`):
 
 ```css
-main [class*="max-w-"]        /* chat column */
-nav[class*="sidebar"], aside:has(a[href*="/chat/"])   /* sidebar */
+[class*="transcript-width"]     /* chat column width  */
+[class*="chat-turn-gap"]        /* --chat-turn-gap, i.e. message spacing */
 ```
 
-**Those two are the fragile parts.** If Claude's markup shifts and they stop
-working, the fix is a selector swap in `common/settings.js` — or a rule in the
-custom CSS box. If you send me the class names or `data-testid` values you see
-in the inspector for the elements you want to hit, I'll wire them in properly
-instead of relying on the substring matches above.
+Matching on the suffix rather than the full class means a rename of the
+`epitaxy-` design-system prefix won't break them, and message spacing is set by
+redefining `--chat-turn-gap` so the site's own `empty:pb-0` rule still applies to
+empty turns.
+
+Hiding the sidebar is the one remaining structural guess:
+
+```css
+nav[class*="sidebar"], [data-testid*="sidebar"], aside:has(a[href*="/chat/"])
+```
+
+If that stops working, the fix is a selector swap in `common/settings.js` — or a
+rule in the custom CSS box.
 
 ## Notes and limitations
 
