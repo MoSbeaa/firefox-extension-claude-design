@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claude Skin</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <h1>Claude Skin</h1>
+          <p id="siteStatus" class="sub">Styling claude.ai</p>
+        </div>
+      </div>
+      <label class="switch" title="Turn all styling on or off">
+        <input type="checkbox" data-setting="enabled" id="enabled" />
+        <span class="track"><span class="knob"></span></span>
+      </label>
+    </header>
+
+    <section class="presets">
+      <button type="button" class="chip" data-preset="midnight">Midnight</button>
+      <button type="button" class="chip" data-preset="paper">Paper</button>
+      <button type="button" class="chip" data-preset="terminal">Terminal</button>
+      <button type="button" class="chip" data-preset="solarized">Solarized</button>
+      <button type="button" class="chip" data-preset="focus">Focus</button>
+    </section>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" class="tab is-active" data-tab="background">Background</button>
+      <button type="button" role="tab" class="tab" data-tab="text">Text</button>
+      <button type="button" role="tab" class="tab" data-tab="layout">Layout</button>
+      <button type="button" role="tab" class="tab" data-tab="advanced">Advanced</button>
+    </nav>
+
+    <main>
+      <!-- ------------------------------------------------ background -->
+      <section class="panel is-active" data-panel="background">
+        <div class="field">
+          <label for="bgMode">Background</label>
+          <select id="bgMode" data-setting="bgMode">
+            <option value="none">Leave site default</option>
+            <option value="color">Solid colour</option>
+            <option value="gradient">Gradient</option>
+            <option value="image">Image</option>
+          </select>
+        </div>
+
+        <div class="group" data-when-bg="color">
+          <div class="field row">
+            <label for="bgColor">Colour</label>
+            <input type="color" id="bgColor" data-setting="bgColor" />
+          </div>
+        </div>
+
+        <div class="group" data-when-bg="gradient">
+          <div class="field row">
+            <label for="gradientFrom">From</label>
+            <input type="color" id="gradientFrom" data-setting="gradientFrom" />
+          </div>
+          <div class="field row">
+            <label for="gradientTo">To</label>
+            <input type="color" id="gradientTo" data-setting="gradientTo" />
+          </div>
+          <div class="field">
+            <label for="gradientAngle">Angle <output data-output-for="gradientAngle"></output></label>
+            <input type="range" id="gradientAngle" data-setting="gradientAngle" min="0" max="360" step="5" />
+          </div>
+        </div>
+
+        <div class="group" data-when-bg="image">
+          <div class="field">
+            <label for="bgImage">Image URL</label>
+            <input type="text" id="bgImage" data-setting="bgImage" placeholder="https://… or pick a file" />
+          </div>
+          <div class="field row buttons">
+            <button type="button" class="btn" id="pickImage">Choose file…</button>
+            <button type="button" class="btn ghost" id="clearImage">Clear</button>
+          </div>
+          <input type="file" id="imageFile" accept="image/*" hidden />
+          <p class="hint" id="imageHint">Local files are embedded in the extension's storage.</p>
+          <div class="field">
+            <label for="bgImageSize">Fit</label>
+            <select id="bgImageSize" data-setting="bgImageSize">
+              <option value="cover">Cover</option>
+              <option value="contain">Contain</option>
+              <option value="100% 100%">Stretch</option>
+              <option value="auto">Original size</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bgImageBlur">Blur <output data-output-for="bgImageBlur"></output></label>
+            <input type="range" id="bgImageBlur" data-setting="bgImageBlur" min="0" max="30" step="1" />
+          </div>
+          <div class="field">
+            <label for="bgImageDim">Dim <output data-output-for="bgImageDim"></output></label>
+            <input type="range" id="bgImageDim" data-setting="bgImageDim" min="0" max="90" step="5" />
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="field row">
+          <label for="surfaceColor">Panel colour</label>
+          <div class="color-pair">
+            <input type="color" id="surfaceColor" data-setting="surfaceColor" data-optional-color />
+            <button type="button" class="btn ghost tiny" data-clear-color="surfaceColor">Auto</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="surfaceOpacity">Panel opacity <output data-output-for="surfaceOpacity"></output></label>
+          <input type="range" id="surfaceOpacity" data-setting="surfaceOpacity" min="20" max="100" step="2" />
+          <p class="hint">Lower values let the background show through the chat panels.</p>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------ text -->
+      <section class="panel" data-panel="text">
+        <div class="field">
+          <label for="fontFamily">Font</label>
+          <select id="fontFamily" data-setting="fontFamily"></select>
+        </div>
+        <div class="field" data-when-font="custom">
+          <label for="customFontFamily">Custom font stack</label>
+          <input
+            type="text"
+            id="customFontFamily"
+            data-setting="customFontFamily"
+            placeholder='"Iosevka", Menlo, monospace'
+          />
+          <p class="hint">Must be installed on this computer — remote webfonts are blocked by claude.ai.</p>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="forceFontEverywhere" data-setting="forceFontEverywhere" />
+          <span>Force font on every element (skips code &amp; icons)</span>
+        </label>
+
+        <div class="field">
+          <label for="fontScale">Size <output data-output-for="fontScale"></output></label>
+          <input type="range" id="fontScale" data-setting="fontScale" min="75" max="160" step="1" />
+        </div>
+        <div class="field">
+          <label for="lineHeight">Line height <output data-output-for="lineHeight"></output></label>
+          <input type="range" id="lineHeight" data-setting="lineHeight" min="0" max="2.4" step="0.05" />
+        </div>
+        <div class="field">
+          <label for="letterSpacing">Letter spacing <output data-output-for="letterSpacing"></output></label>
+          <input type="range" id="letterSpacing" data-setting="letterSpacing" min="-1" max="3" step="0.1" />
+        </div>
+        <div class="field">
+          <label for="fontWeight">Weight <output data-output-for="fontWeight"></output></label>
+          <input type="range" id="fontWeight" data-setting="fontWeight" min="0" max="800" step="100" />
+        </div>
+
+        <hr />
+
+        <div class="field row">
+          <label for="textColor">Text colour</label>
+          <div class="color-pair">
+            <input type="color" id="textColor" data-setting="textColor" data-optional-color />
+            <button type="button" class="btn ghost tiny" data-clear-color="textColor">Auto</button>
+          </div>
+        </div>
+        <div class="field row">
+          <label for="accentColor">Accent colour</label>
+          <div class="color-pair">
+            <input type="color" id="accentColor" data-setting="accentColor" data-optional-color />
+            <button type="button" class="btn ghost tiny" data-clear-color="accentColor">Auto</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------------------------------------- layout -->
+      <section class="panel" data-panel="layout">
+        <div class="field">
+          <label for="chatWidth">Chat width <output data-output-for="chatWidth"></output></label>
+          <input type="range" id="chatWidth" data-setting="chatWidth" min="0" max="1600" step="20" />
+          <p class="hint">0 keeps the site's own column width.</p>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="hideSidebar" data-setting="hideSidebar" />
+          <span>Hide the conversation sidebar</span>
+        </label>
+
+        <hr />
+
+        <div class="field">
+          <label for="codeFontFamily">Code font</label>
+          <select id="codeFontFamily" data-setting="codeFontFamily"></select>
+        </div>
+        <div class="field" data-when-code-font="custom">
+          <label for="customCodeFontFamily">Custom code font</label>
+          <input type="text" id="customCodeFontFamily" data-setting="customCodeFontFamily" placeholder='"Iosevka", monospace' />
+        </div>
+        <div class="field">
+          <label for="codeFontSize">Code size <output data-output-for="codeFontSize"></output></label>
+          <input type="range" id="codeFontSize" data-setting="codeFontSize" min="0" max="24" step="1" />
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------- advanced -->
+      <section class="panel" data-panel="advanced">
+        <div class="field">
+          <label for="customCss">Custom CSS</label>
+          <textarea
+            id="customCss"
+            data-setting="customCss"
+            rows="8"
+            spellcheck="false"
+            placeholder="/* Applied last, so it wins.&#10;   Prefix with html.cst-on for extra weight. */"
+          ></textarea>
+          <p class="hint">Injected into claude.ai after everything above.</p>
+        </div>
+        <div class="field">
+          <label for="settingsJson">Settings JSON</label>
+          <textarea id="settingsJson" rows="5" spellcheck="false" placeholder="Paste a saved configuration here"></textarea>
+          <div class="field row buttons" style="margin-top: 8px">
+            <button type="button" class="btn" id="exportBtn">Fill &amp; copy</button>
+            <button type="button" class="btn" id="importBtn">Apply pasted</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="generated">Generated CSS</label>
+          <textarea id="generated" rows="6" readonly spellcheck="false"></textarea>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bar foot">
+      <span id="status" class="status"></span>
+      <button type="button" class="btn ghost" id="resetBtn">Reset all</button>
+    </footer>
+
+    <script src="../common/settings.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
